@@ -1,0 +1,23 @@
+{
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "(DEBUG) build",
+            "linux": {
+                "command": "${workspaceFolder}/debug_build.sh"
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/src"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "(DEBUG) build task"
+        }
+    ],
+    "version": "2.0.0"
+}

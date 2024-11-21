@@ -1,0 +1,17 @@
+{
+    "todohighlight.isEnable": true,
+    "todohighlight.isCaseSensitive": true,
+    "todohighlight.keywords": [
+        {
+            "text": "TODO",
+            "color": "#FFFFFF",
+            "backgroundColor": "#82A65E",
+        }
+    ],
+
+    "markdownlint.config": {
+        "MD033": false
+    },
+
+    "C_Cpp.default.compilerPath": "/usr/bin/gcc"
+}
