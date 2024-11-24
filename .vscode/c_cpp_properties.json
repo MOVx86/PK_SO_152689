@@ -3,7 +3,10 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/src/**"
+                "${workspaceFolder}/src/**",
+                "/usr/include/**",
+                "/usr/local/include/**",
+                "/usr/lib/gcc/x86_64-linux-gnu/13/include/**"
             ],
             "defines": [
                 "_DEBUG"
@@ -11,7 +14,7 @@
             "compilerPath": "/usr/bin/gcc",
             "cStandard": "gnu17",
             "cppStandard": "gnu++17",
-            "intelliSenseMode": "gcc-x64",
+            "intelliSenseMode": "linux-gcc-x64",
             "compilerArgs": [
                 "-std=gnu17"
             ],
