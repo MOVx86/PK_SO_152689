@@ -13,5 +13,9 @@
         "MD033": false
     },
 
-    "C_Cpp.default.compilerPath": "/usr/bin/gcc"
+    "C_Cpp.default.compilerPath": "/usr/bin/gcc",
+    "files.associations": {
+        "ipc_utils.h": "c",
+        "manager.h": "c"
+    }
 }

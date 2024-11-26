@@ -5,6 +5,7 @@
 #include "core/warehouse.h"
 #include "core/manofacturers.h"
 #include "core/suppliers.h"
+#include "pid_array.h"
 
 typedef struct Managment {
     Warehouse warehouse;
@@ -18,4 +19,4 @@ void command_2();
 void command_3();
 void command_4();
 
-b8 run_manager_process(Managment *manager, pid_t pid_id);
+b8 run_manager_process(Managment *manager, pid_list *list);
