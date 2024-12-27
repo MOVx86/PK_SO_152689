@@ -2,6 +2,12 @@
 
 ## CHANGELOG
 
+### 27.12.2024
+
+- koniec przestoju
+- przebudowałem lekko program
+- dodane wstępnie kolejki komunikatów + wstepna obsługa sygnałów przez głowny proces
+
 ### 24.11.2024
 
 - wstępna szczegółowa struktura plików źródłowych
