@@ -1,15 +1,36 @@
 #pragma once
 
-// true/false
-#define TRUE 1
-#define FALSE 0
-
 // proper platform detection
 #if defined(__linux__)
     #define PLATFORM_LINUX 1
 #else
     #error "Linux distribution required to run!"
 #endif
+
+// universal libraries
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+// linux specific libraries
+#if PLATFORM_LINUX == 1
+    #include <unistd.h>
+    #include <sys/types.h>
+    #include <sys/ipc.h>
+    #include <mqueue.h>
+    #include <fcntl.h>
+    #include <sys/stat.h>
+    #include <sys/shm.h>
+    #include <sys/sem.h>
+    #include <sys/wait.h>
+    #include <signal.h>
+#else
+    #error "Linux platform not detected! Cannot include linux specific libraries!"
+#endif
+
+// true/false
+#define TRUE 1
+#define FALSE 0
 
 // defined static assertions
 #if defined(__GNUC__)
@@ -31,22 +52,4 @@ typedef signed long long    s64;
 typedef float               f32;
 typedef double              f64;
 // boolean types
-typedef _Bool               b8;
-
-// universal
-#include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
-
-// linux specific
-#if PLATFORM_LINUX == 1
-    #include <unistd.h>
-    #include <sys/types.h>
-    #include <sys/ipc.h>
-    #include <sys/shm.h>
-    #include <sys/sem.h>
-    #include <sys/wait.h>
-    #include <signal.h>
-#else
-    #error "Linux platform not detected! Cannot include linux specific libraries!"
-#endif
+typedef _Bool                b8;

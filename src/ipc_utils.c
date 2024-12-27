@@ -20,6 +20,7 @@ s32 create_semaphore(key_t key) {
     return sem_id;
 }
 
+// TODO understand how semaphor locking works
 void sem_lock(s32 sem_id) {
     struct sembuf sb = {0, -1, 0};
     semop(sem_id, &sb, 1);

@@ -2,21 +2,14 @@
 
 #include "defines.h"
 #include "ipc_utils.h"
-#include "core/warehouse.h"
-#include "core/manofacturers.h"
-#include "core/suppliers.h"
+#include "structures.h"
 #include "pid_array.h"
 
-typedef struct Managment {
-    Warehouse warehouse;
-    // TODO manufactures;
-    // TODO suppliers;
-    
-} Managment;
+void close_wh(s32 signal);
+void close_ma(s32 signal);
+void close_keep_wh_ma(s32 signal);
+void close_wh_ma(s32 signal);
 
-void command_1();
-void command_2();
-void command_3();
-void command_4();
+void close_main(s32 signal);
 
-b8 run_manager_process(Managment *manager, pid_list *list);
+b8 run_manager_process(pid_list *processes, s32 shm_id, s32 sem_id);
