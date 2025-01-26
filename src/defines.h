@@ -7,10 +7,13 @@
     #error "Linux distribution required to run!"
 #endif
 
+#define DEBUG 1
+
 // universal libraries
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 // linux specific libraries
 #if PLATFORM_LINUX == 1

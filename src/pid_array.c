@@ -4,7 +4,7 @@ void init_pid_list(pid_list *list) {
     list->pids = NULL;
     list->size = 0;
     list->capacity = 0;
-};
+}
 
 void push_pid(pid_list *list, pid_t new_pid) {
     if (list->size == list->capacity) {

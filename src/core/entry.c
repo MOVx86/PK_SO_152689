@@ -14,23 +14,23 @@
 /* ------------------- */
 /* PROGRAM ENTRY POINT */
 /* ------------------- */
+
+struct mq_attr attributes = {
+    .mq_flags   = 0,
+    .mq_maxmsg  = 10,
+    .mq_msgsize = sizeof(message_t),
+    .mq_curmsgs = 0
+};
+
 int main(void) {
     /* --------------------- */
     /* INITIAL PROGRAM SETUP */
     /* --------------------- */
 
-    // declare and define dynamic pid list
-    // used to send all sub-process PIDs to parent process loops
+    // all forks stored in a dynamic list
+    // used to send all sub-process PIDs to parent process loop
     pid_list forks;
     init_pid_list(&forks);
-
-    // starting queue attributes
-    struct mq_attr attributes = {
-        .mq_flags   = 0,
-        .mq_maxmsg  = 10,
-        .mq_msgsize = sizeof(message_t),
-        .mq_curmsgs = 0
-    };
 
     // generate ipc and shared mem keys
     size_t shm_size = sizeof(Warehouse);
@@ -61,7 +61,7 @@ int main(void) {
         }
     }
     push_pid(&forks, warehouse_id);
-    mqd_t qWarehouse = mq_open("/qW", O_CREAT | O_WRONLY, 0644, &attributes);
+
 
     // suppliers sub-processes
     pid_t supplierX_id = fork();
@@ -75,7 +75,6 @@ int main(void) {
         }
     }
     push_pid(&forks, supplierX_id);
-    mqd_t qSupplierX = mq_open("/qX", O_CREAT, 0644, &attributes);  mq_close(qSupplierX);
 
     pid_t supplierY_id = fork();
     if (supplierY_id == 0) {
@@ -88,7 +87,6 @@ int main(void) {
         }
     }
     push_pid(&forks, supplierY_id);
-    mqd_t qSupplierY = mq_open("/qY", O_CREAT, 0644, &attributes);  mq_close(qSupplierY);
 
     pid_t supplierZ_id = fork();
     if (supplierZ_id == 0) {
@@ -101,7 +99,6 @@ int main(void) {
         }
     }
     push_pid(&forks, supplierZ_id);
-    mqd_t qSupplierZ = mq_open("/qZ", O_CREAT, 0644, &attributes);  mq_close(qSupplierZ);
 
     // manufacturers sub-processes
     pid_t manufacturerA_id = fork();
@@ -115,7 +112,6 @@ int main(void) {
         }
     }
     push_pid(&forks, manufacturerA_id);
-    mqd_t qManufacturerA = mq_open("/qA", O_CREAT | O_WRONLY, 0644, &attributes);
 
     pid_t manufacturerB_id = fork();
     if (manufacturerB_id == 0) {
@@ -127,23 +123,22 @@ int main(void) {
             return 1;
         }
     }
-    push_pid(&forks, manufacturerB_id);
-    mqd_t qManufacturerB = mq_open("/qB", O_CREAT | O_WRONLY, 0644, &attributes);
+    push_pid(&forks, manufacturerA_id);
 
     /* ------------------------------------------- */
     /* MANAGER - PARENT PROCESS ACTUAL FUNCTIONING */
     /* ------------------------------------------- */
 
     // run manager parent process loop
+    #if DEBUG == 1
+        printf("Running manager\n");
+    #endif
     if (run_manager_process(&forks, shm_id, sem_id));
     // TODO handling incorrect manager closing (wrapper macro?)
 
     // unlink all queues
     // TODO handling failed unlinking (wrapper macro?)
     mq_unlink("/qW");
-    mq_unlink("/qX");
-    mq_unlink("/qY");
-    mq_unlink("/qZ");
     mq_unlink("/qA");
     mq_unlink("/qB");
 
@@ -156,9 +151,6 @@ int main(void) {
         perror("shmctl failed");
         return 1;
     }
-
-    // free pid list
-    free_list(&forks);
 
     return 0;
 }

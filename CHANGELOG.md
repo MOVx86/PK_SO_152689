@@ -2,6 +2,10 @@
 
 ## CHANGELOG
 
+### 12.01.2024
+
+- zmiana działania listy pidów (używanie uthash.h)
+
 ### 27.12.2024
 
 - koniec przestoju

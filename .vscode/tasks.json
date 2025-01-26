@@ -2,9 +2,9 @@
     "tasks": [
         {
             "type": "shell",
-            "label": "(DEBUG) build",
+            "label": "build",
             "linux": {
-                "command": "${workspaceFolder}/debug_build.sh"
+                "command": "${workspaceFolder}/build.sh"
             },
             "options": {
                 "cwd": "${workspaceFolder}/src"
@@ -16,7 +16,7 @@
                 "kind": "build",
                 "isDefault": true
             },
-            "detail": "(DEBUG) build task"
+            "detail": "build task"
         }
     ],
     "version": "2.0.0"
