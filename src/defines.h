@@ -12,6 +12,7 @@
 
 #define DEBUG 0
 #define USE_SLEEP 1
+#define RUN_UI 0
 
 #define DEFAULT_CAP 1000 // (and limit)
 #define DEFAULT_X 0
@@ -36,6 +37,7 @@
     #include <sys/sem.h>
     #include <sys/wait.h>
     #include <signal.h>
+    #include <sys/select.h>
     
     // UI library
     #include <ncurses.h>

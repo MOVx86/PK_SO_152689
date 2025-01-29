@@ -45,7 +45,7 @@ void load_warehouse_record(Warehouse *warehouse) {
 }
 
 void write_warehouse_record(Warehouse * warehouse) {
-    FILE *warehouseLog = fopen("./bin/warehouseLog", "w");
+    FILE *warehouseLog = fopen("./warehouseLog", "w");
     if (warehouseLog == NULL) {
         perror("write_record");
         return;
