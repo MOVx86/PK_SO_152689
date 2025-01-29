@@ -2,6 +2,17 @@
 
 ## CHANGELOG
 
+### 29.01.2025
+
+- dodana funkcjonalność wszystkich procesów
+- dodana synchronizacja semaforami
+- komunikacja pomiędzy menedżerem, a wszystkimi procesami
+- zostaje UI
+
+### 26.01.2025
+
+- kolejka komunikatów działa
+
 ### 12.01.2024
 
 - zmiana działania listy pidów (używanie uthash.h)

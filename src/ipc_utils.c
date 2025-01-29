@@ -1,5 +1,9 @@
+// DOC-MISSING
+// FINISHED
+
 #include "ipc_utils.h"
 
+// create shared memory key
 s32 create_shared_memory(key_t key, size_t size) {
     s32 shm_id = shmget(key, size, IPC_CREAT | 0666);
     if (shm_id == -1) {
@@ -17,10 +21,15 @@ s32 create_semaphore(key_t key) {
         exit(1);
     }
 
+    if (semctl(sem_id, 0, SETVAL, 1) == -1) {
+        perror("semctl");
+        exit(1);
+    }
+
     return sem_id;
 }
 
-// TODO understand how semaphor locking works
+// locking and unlocking semaphors
 void sem_lock(s32 sem_id) {
     struct sembuf sb = {0, -1, 0};
     semop(sem_id, &sb, 1);

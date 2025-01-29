@@ -4,8 +4,23 @@
     "todohighlight.keywords": [
         {
             "text": "TODO",
+            "color": "#000000",
+            "backgroundColor": "#FDFD96",
+        },
+        {
+            "text": "DOC-MISSING",
             "color": "#FFFFFF",
-            "backgroundColor": "#82A65E",
+            "backgroundColor": "#FF6961"
+        },
+        {
+            "text": "DOC-READY",
+            "color": "#FFFFFF",
+            "backgroundColor": "#82A65E"
+        },
+        {
+            "text": "FINISHED",
+            "color": "#FFFFFF",
+            "backgroundColor": "#82A65E"            
         }
     ],
 

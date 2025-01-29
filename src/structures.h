@@ -1,12 +1,14 @@
+// DOC-MISSING
+// FINISHED
+
 #pragma once
 
 #include "defines.h"
 
-#define SUPPLIER_NUM        3
-#define MANUFACTURER_NUM    2
-
+// extern declaration of message queue attributes - used in different parts of code
 extern struct mq_attr attributes;
 
+// structure sent by message queues
 typedef struct message_t {
     s32 commandID;
     u8  message[256];
@@ -23,5 +25,6 @@ typedef struct Warehouse {
     volatile u32 partY;
     volatile u32 partZ;
     volatile u32 capacity;
+    b8 isOpen;
 } Warehouse;
 

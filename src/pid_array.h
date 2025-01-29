@@ -1,7 +1,11 @@
+// DOC-MISSING
+// FINISHED
+
 #pragma once
 
 #include "defines.h"
 
+// dynamic list of sub-process PIDs sent to main process running loop
 typedef struct pid_list {
     pid_t *pids;
     size_t size;

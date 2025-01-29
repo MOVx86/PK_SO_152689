@@ -1,3 +1,5 @@
+// DOC-MISSING
+
 #include "defines.h"
 #include "structures.h"
 #include "ipc_utils.h"
@@ -10,11 +12,37 @@
 // TODO detailed comments
 // TODO messaging system
 // TODO all internal subprocess functioning
+// TODO add terminal UI
+
+// wrapper macro for handling sub-process running loop functions
+#define RUN_LOOP(pid, function)                                                         \
+    do {                                                                                \
+        if (function) {                                                                 \
+            printf("Leaving process!\n");                                               \
+            return(0);                                                                  \
+        }                                                                               \
+        else {                                                                          \
+            char error_message[256];                                                    \
+            snprintf(error_message, sizeof(error_message), "[%d] process failed", pid); \
+            perror(error_message);                                                      \
+            return(1);                                                                  \
+        }                                                                               \
+    } while (0)                                                                         \
+
+// wrapper macro for handling unlinking of message queues
+#define MQ_UNLINK(queue)                \
+    do {                                \
+        if (mq_unlink(queue) == -1) {   \
+            perror(queue);              \
+        }                               \
+    }                                   \
+    while (0)                           \
 
 /* ------------------- */
 /* PROGRAM ENTRY POINT */
 /* ------------------- */
 
+// definition of message queue attributes
 struct mq_attr attributes = {
     .mq_flags   = 0,
     .mq_maxmsg  = 10,
@@ -34,10 +62,11 @@ int main(void) {
 
     // generate ipc and shared mem keys
     size_t shm_size = sizeof(Warehouse);
-    key_t mng_key = ftok("../bin/fabryka", 1);
+    key_t shm_key = ftok("../bin/fabryka", 1);
 
-    s32 shm_id = create_shared_memory(mng_key, shm_size);
-    s32 sem_id = create_semaphore(mng_key);
+    // create and allocate shared memory, create shared memory semaphore
+    s32 shm_id = create_shared_memory(shm_key, shm_size);
+    s32 sem_id = create_semaphore(shm_key);
 
     Warehouse *warehouse = (struct Warehouse *) shmat(shm_id, NULL, 0);
     if (warehouse == (void*) -1) {
@@ -49,98 +78,70 @@ int main(void) {
     /* CREATING FORKS & ALL MESSAGE QUEUES */
     /* ----------------------------------- */
 
-    // warehouse sub-process
+    // all sub-processes run their "main" function where the proper running loop is located
+    // sub-process loop functions are of bool type, if anything fails - FALSE is returned to indicate an error upon closing
+    // sub-processes communicate with the manager through message queues and use shared memory
+
+    // run warehouse sub-process
+    // push warehouse PID to dynamic list
     pid_t warehouse_id = fork();
     if (warehouse_id == 0) {
-        if (run_warehouse_process(warehouse, shm_id, sem_id)) {
-            return 0;;
-        }
-        else {
-            perror("manager subprocess failed to close properly");
-            return 1;
-        }
+        RUN_LOOP(warehouse_id, run_warehouse_process(warehouse, shm_id, sem_id));
     }
     push_pid(&forks, warehouse_id);
 
-
-    // suppliers sub-processes
+    // run supplier sub-processes
+    // push suppliers PIDs to dynamic list
     pid_t supplierX_id = fork();
     if (supplierX_id == 0) {
-        if (run_supplier_process(TYPE_X, shm_id,sem_id)) {
-            return 0;;
-        }
-        else {
-            perror("supplier X subprocess failed to close properly");
-            return 1;
-        }
+        RUN_LOOP(supplierX_id, run_supplier_process(warehouse, TYPE_X, shm_id, sem_id));
     }
     push_pid(&forks, supplierX_id);
 
     pid_t supplierY_id = fork();
     if (supplierY_id == 0) {
-        if (run_supplier_process(TYPE_Y, shm_id,sem_id)) {
-            return 0;;
-        }
-        else {
-            perror("supplier Y subprocess failed to close properly");
-            return 1;
-        }
+        RUN_LOOP(supplierY_id, run_supplier_process(warehouse, TYPE_Y, shm_id, sem_id));
     }
     push_pid(&forks, supplierY_id);
 
     pid_t supplierZ_id = fork();
     if (supplierZ_id == 0) {
-        if (run_supplier_process(TYPE_Z, shm_id,sem_id)) {
-            return 0;;
-        }
-        else {
-            perror("supplier Z subprocess failed to close properly");
-            return 1;
-        }
+        RUN_LOOP(supplierZ_id, run_supplier_process(warehouse, TYPE_Z, shm_id, sem_id));
     }
     push_pid(&forks, supplierZ_id);
 
-    // manufacturers sub-processes
+    // run manufacturer sub-processes
+    // push manufacturers PIDs to dynamic list
     pid_t manufacturerA_id = fork();
     if (manufacturerA_id == 0) {
-        if (run_manufactuter_process(shm_id, sem_id)) {
-            return 0;;
-        }
-        else {
-            perror("manufacturer A subprocess failed to close properly");
-            return 1;
-        }
+        RUN_LOOP(manufacturerA_id, run_manufactuter_process("/qA", warehouse, shm_id, sem_id));
     }
     push_pid(&forks, manufacturerA_id);
 
     pid_t manufacturerB_id = fork();
     if (manufacturerB_id == 0) {
-        if (run_manufactuter_process(shm_id, sem_id)) {
-            return 0;;
-        }
-        else {
-            perror("manufacturer A subprocess failed to close properly");
-            return 1;
-        }
+        RUN_LOOP(manufacturerB_id ,run_manufactuter_process("/qB", warehouse, shm_id, sem_id));
     }
-    push_pid(&forks, manufacturerA_id);
+    push_pid(&forks, manufacturerB_id);
 
     /* ------------------------------------------- */
     /* MANAGER - PARENT PROCESS ACTUAL FUNCTIONING */
     /* ------------------------------------------- */
 
+    // main process loop, used to manage all sub-processes by sending commands to proper message queues
+    // main process loop also contains the terminal UI
+
     // run manager parent process loop
-    #if DEBUG == 1
-        printf("Running manager\n");
-    #endif
-    if (run_manager_process(&forks, shm_id, sem_id));
-    // TODO handling incorrect manager closing (wrapper macro?)
+    if (!run_manager_process(&forks, shm_id, sem_id)) {
+        char error_message[256];
+        snprintf(error_message, sizeof(error_message), "[%d] process failed", getpid());
+        perror(error_message);
+    }
 
     // unlink all queues
-    // TODO handling failed unlinking (wrapper macro?)
-    mq_unlink("/qW");
-    mq_unlink("/qA");
-    mq_unlink("/qB");
+    MQ_UNLINK("/qW");
+    MQ_UNLINK("/qA");
+    MQ_UNLINK("/qB");
 
     // clear shared memory
     if (shmdt(warehouse) == -1) {

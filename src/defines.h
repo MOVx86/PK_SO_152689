@@ -1,3 +1,6 @@
+// DOC-MISSING
+// FINISHED
+
 #pragma once
 
 // proper platform detection
@@ -8,14 +11,20 @@
 #endif
 
 #define DEBUG 1
+#define USE_SLEEP 1
 
-// universal libraries
+#define DEFAULT_CAP 1000 // (and limit)
+#define DEFAULT_X 0
+#define DEFAULT_Y 0
+#define DEFAULT_Z 0
+
+// including universal C libraries
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-// linux specific libraries
+// including linux specific C libraries
 #if PLATFORM_LINUX == 1
     #include <unistd.h>
     #include <sys/types.h>
