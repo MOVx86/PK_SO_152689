@@ -1,4 +1,5 @@
 // DOC-MISSING
+// FINISHED
 
 #include "core/warehouse.h"
 #define MIN_TIME 10

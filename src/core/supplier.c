@@ -1,3 +1,6 @@
+// DOC-MISSING
+// FINISHED
+
 #include "core/supplier.h"
 
 #define MIN_TIME 1
@@ -26,7 +29,9 @@ b8 run_supplier_process(Warehouse *warehouse, PART_TYPE type, s32 shm_id, s32 se
                         warehouse->capacity -= 1;
                     }
                     else {
-                        printf("Not enough space in warehouse!\n");
+                        #if DEBUG == 1
+                            printf("Not enough space in warehouse!\n");
+                        #endif
                     }
                     break;
                 case TYPE_Y:
@@ -35,7 +40,9 @@ b8 run_supplier_process(Warehouse *warehouse, PART_TYPE type, s32 shm_id, s32 se
                         warehouse->capacity -= 2;
                     }
                     else {
-                        printf("Not enough space in warehouse!\n");
+                        #if DEBUG == 1
+                            printf("Not enough space in warehouse!\n");
+                        #endif
                     }
                     break;
                 case TYPE_Z:
@@ -44,7 +51,9 @@ b8 run_supplier_process(Warehouse *warehouse, PART_TYPE type, s32 shm_id, s32 se
                         warehouse->capacity -= 3;
                     }
                     else {
-                        printf("Not enough space in warehouse!\n");
+                        #if DEBUG == 1
+                            printf("Not enough space in warehouse!\n");
+                        #endif
                     }
                     break;
                 default:

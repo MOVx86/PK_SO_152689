@@ -57,7 +57,7 @@ void signal_handler(s32 signal) {
     }
 }
 
-b8 run_manager_process(pid_list *processes, s32 shm_id, s32 sem_id) {
+b8 run_manager_process(pid_list *processes, Warehouse *warehouse, s32 shm_id, s32 sem_id) {
     // starting manager process
     #if DEBUG == 1
         printf("MANAGER PROCESS: %d\n", getpid());
@@ -77,12 +77,59 @@ b8 run_manager_process(pid_list *processes, s32 shm_id, s32 sem_id) {
     signal(SIGTSTP, signal_handler);
     signal(SIGTERM, signal_handler);
 
+    // initialize and set up UI (ncrses)
+    initscr();
+    noecho();
+    curs_set(TRUE);
+
+    int uiWidth = 30;
+    int warehouseUiHeight = 9;
+    int processesUiHeight = 8;
+
+    WINDOW *warehouseWindow = newwin(warehouseUiHeight + processesUiHeight, uiWidth, 0, 0);
+    WINDOW *processWindow = newwin(processesUiHeight, uiWidth, warehouseUiHeight, 0);
+
     // parent process running loop
     // listening for signals & sending messages to sub-processes
     // TODO terminal UI
     while (!shouldExit) {
+        // updating terminal UI
+        werase(warehouseWindow);
+        werase(processWindow);
+
+        char warehouseState[30];
+        if (warehouse->isOpen) {
+            strncpy(warehouseState, "|Warehouse is open.          |", sizeof(warehouseState));
+        } else {
+            strncpy(warehouseState, "|Warehouse is closed.        |", sizeof(warehouseState));
+        }
+
+        // updating contents of warehouse segment
+        mvwprintw(warehouseWindow, 0, 0, "|----------------------------|");
+        mvwprintw(warehouseWindow, 1, 0, "|Current state of warehouse: |");
+        mvwprintw(warehouseWindow, 2, 0, "|Capacity: %-17d |", warehouse->capacity);
+        mvwprintw(warehouseWindow, 3, 0, "|Part X: %-19d |", warehouse->partX);
+        mvwprintw(warehouseWindow, 4, 0, "|Part Y: %-19d |", warehouse->partY);
+        mvwprintw(warehouseWindow, 5, 0, "|Part Z: %-19d |", warehouse->partZ);
+        mvwprintw(warehouseWindow, 6, 0, "%s", warehouseState);
+        mvwprintw(warehouseWindow, 7, 0, "|----------------------------|");
+
+        // updating contents of processes segment
+        mvwprintw(processWindow, 0, 0, "|Current running processes:  |");
+        mvwprintw(processWindow, 1, 0, "|Main process: %-13u |", getpid());
+        for (size_t i = 0; i < processes->size; ++i) {
+            mvwprintw(processWindow, i+2, 0, "|[PID]: %-20u |", processes->pids[i]);
+        }
+        mvwprintw(processWindow, 7, 0, "|----------------------------|");
+        
+        wrefresh(warehouseWindow);
+        wrefresh(processWindow);
+
+        // listening for signals
         if (pendingSignal) {
-            printf("Current message:\n%s\ncommand ID: %d\n", pendingMessage.message, pendingMessage.commandID);
+            #if DEBUG == 1
+                printf("Current message:\n%s\ncommand ID: %d\n", pendingMessage.message, pendingMessage.commandID);
+            #endif
             switch (pendingMessage.commandID) {
                 case 1:
                     MMQ_SEND(qWarehouse, "/qW", &pendingMessage, sizeof(message_t), 1);
@@ -114,7 +161,9 @@ b8 run_manager_process(pid_list *processes, s32 shm_id, s32 sem_id) {
 
     // check if all sub-processes closed correctly
     for (size_t i = 0; i < processes->size; ++i) {
-        printf("Closing process %d\n", processes->pids[i]);
+        #if DEBUG == 1
+            printf("Closing process %d\n", processes->pids[i]);
+        #endif
         if(waitpid(processes->pids[i], &status, 0) == -1) {
             perror("Failed to close process!");
         };

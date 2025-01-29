@@ -1,7 +1,10 @@
+// DOC-MISSING
+// FINISHED
+
 #include "core/manufacturer.h"
 
-#define MIN_TIME 5
-#define MAX_TIME 10
+#define MIN_TIME 10
+#define MAX_TIME 60
 
 b8 manufacturerIsRunning = TRUE;
 message_t manMessageBuffer;
@@ -61,7 +64,9 @@ b8 run_manufactuter_process(const char *queue, Warehouse *warehouse, s32 shm_id,
                 warehouse->capacity += 6;
             }
             else {
-                printf("Warehouse is empty!\n");
+                #if DEBUG == 1
+                    printf("Warehouse is empty!\n");
+                #endif
             }
         }
         sem_unlock(sem_id);

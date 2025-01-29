@@ -10,7 +10,7 @@
     #error "Linux distribution required to run!"
 #endif
 
-#define DEBUG 1
+#define DEBUG 0
 #define USE_SLEEP 1
 
 #define DEFAULT_CAP 1000 // (and limit)
@@ -36,6 +36,9 @@
     #include <sys/sem.h>
     #include <sys/wait.h>
     #include <signal.h>
+    
+    // UI library
+    #include <ncurses.h>
 #else
     #error "Linux platform not detected! Cannot include linux specific libraries!"
 #endif

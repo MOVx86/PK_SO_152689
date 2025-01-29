@@ -1,4 +1,5 @@
 // DOC-MISSING
+// FINISHED
 
 #include "defines.h"
 #include "structures.h"
@@ -9,16 +10,10 @@
 #include "core/supplier.h"
 #include "core/manufacturer.h"
 
-// TODO detailed comments
-// TODO messaging system
-// TODO all internal subprocess functioning
-// TODO add terminal UI
-
 // wrapper macro for handling sub-process running loop functions
 #define RUN_LOOP(pid, function)                                                         \
     do {                                                                                \
         if (function) {                                                                 \
-            printf("Leaving process!\n");                                               \
             return(0);                                                                  \
         }                                                                               \
         else {                                                                          \
@@ -132,7 +127,7 @@ int main(void) {
     // main process loop also contains the terminal UI
 
     // run manager parent process loop
-    if (!run_manager_process(&forks, shm_id, sem_id)) {
+    if (!run_manager_process(&forks, warehouse, shm_id, sem_id)) {
         char error_message[256];
         snprintf(error_message, sizeof(error_message), "[%d] process failed", getpid());
         perror(error_message);
