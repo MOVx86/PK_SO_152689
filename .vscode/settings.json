@@ -18,6 +18,11 @@
             "backgroundColor": "#82A65E"
         },
         {
+            "text": "UNFINISHED",
+            "color": "#FFFFFF",
+            "backgroundColor": "#FF6961"
+        },
+        {
             "text": "FINISHED",
             "color": "#FFFFFF",
             "backgroundColor": "#82A65E"            

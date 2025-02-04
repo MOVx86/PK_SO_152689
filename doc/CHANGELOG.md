@@ -2,6 +2,12 @@
 
 ## CHANGELOG
 
+### 04.02.2025
+
+- lekkie przebudowanie struktury katalogowej
+- zmiana w planowanym UI, wykorzystanie ncurses, uruchamianie drugiego terminalu z UI (wstępnie, jeszcze niefunkcjonalne)
+- planowanie testów
+
 ### 29.01.2025
 
 - dodana funkcjonalność wszystkich procesów

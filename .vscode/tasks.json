@@ -17,6 +17,17 @@
                 "isDefault": true
             },
             "detail": "build task"
+        },
+        {
+            "type": "shell",
+            "label": "check files",
+            "linux": {
+                "command": "${workspaceFolder}/verify_file_state.sh"
+            },
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "detail": "check if files are finished/unfinished"
         }
     ],
     "version": "2.0.0"

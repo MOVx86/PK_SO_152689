@@ -1,0 +1,19 @@
+Finished files:
+
+
+Unfinished files:
+./src/core/manager.h
+./src/core/supplier.h
+./src/core/manufacturer.c
+./src/core/manager.c
+./src/core/warehouse.c
+./src/core/entry.c
+./src/core/manufacturer.h
+./src/core/warehouse.h
+./src/core/supplier.c
+./src/pid_array.c
+./src/ipc_utils.h
+./src/defines.h
+./src/ipc_utils.c
+./src/structures.h
+./src/pid_array.h
