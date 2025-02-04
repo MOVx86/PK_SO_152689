@@ -20,7 +20,11 @@ echo "Building $assembly..."
 gcc $defines $includeFlags $compileFlags $cFiles -o ../bin/$assembly $linkerFlags
 
 # build separate ui executable
-cFiles="./ui/ui_terminal.c"
+cFiles=""
+while IFS= read -r -d $'\0' file; do
+    cFiles="$cFiles $file"
+done < <(find . -type f -name "*.c" -not -path "./core/*" -print0)
+# echo "List of .c files: $cFiles"
 
 assembly="ui_fabryka"
 defines="-D_DEBUG"

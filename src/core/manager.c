@@ -1,4 +1,5 @@
 // DOC-MISSING
+// UNFINISHED
 
 #include "core/manager.h"
 
@@ -83,118 +84,11 @@ b8 run_manager_process(pid_list *processes, Warehouse *warehouse, s32 shm_id, s3
     signal(SIGTSTP, signal_handler);
     signal(SIGTERM, signal_handler);
 
-    // initialize and set up UI (ncrses)
-    #if RUN_UI == 1
-        initscr();
-        raw();
-        noecho();
-        curs_set(FALSE);
-
-        int uiWidth = 30;
-        int warehouseUiHeight = 9;
-        int processesUiHeight = 8;
-
-        WINDOW *window = newwin(warehouseUiHeight + processesUiHeight + 1, uiWidth, 0, 0);
-
-        // input processing
-        fd_set readfds;
-        struct timeval timeout;
-        timeout.tv_sec = 0;
-        timeout.tv_usec = 100;
-    #endif
-
     // parent process running loop
     // listening for signals & sending messages to sub-processes
     // TODO terminal UI
 
-    // input handling
-    #if RUN_UI == 1
-        s8 inputBuffer[256];
-        s32 bufferIndex = 0;
-
-        memset(inputBuffer, 0, sizeof(inputBuffer));
-    #endif
-
     while (!shouldExit) {
-        // updating terminal UI
-        #if RUN_UI == 1
-
-            werase(window);
-
-            char warehouseState[30];
-            if (warehouse->isOpen) {
-                strncpy(warehouseState, "|Warehouse is open.          |", sizeof(warehouseState));
-            } else {
-                strncpy(warehouseState, "|Warehouse is closed.        |", sizeof(warehouseState));
-            }
-
-            // updating contents of warehouse segment
-            mvwprintw(window, 0, 0, "|----------------------------|");
-            mvwprintw(window, 1, 0, "|Current state of warehouse: |");
-            mvwprintw(window, 2, 0, "|Capacity: %-17d |", warehouse->capacity);
-            mvwprintw(window, 3, 0, "|Part X: %-19d |", warehouse->partX);
-            mvwprintw(window, 4, 0, "|Part Y: %-19d |", warehouse->partY);
-            mvwprintw(window, 5, 0, "|Part Z: %-19d |", warehouse->partZ);
-            mvwprintw(window, 6, 0, "%s", warehouseState);
-            mvwprintw(window, 7, 0, "|----------------------------|");
-
-            // updating contents of processes segment
-            mvwprintw(window, 8, 0, "|Current running processes:  |");
-            mvwprintw(window, 9, 0, "|Main process: %-13u |", getpid());
-            for (size_t i = 0; i < processes->size; ++i) {
-                mvwprintw(window, i+10, 0, "|[PID]: %-20u |", processes->pids[i]);
-            }
-            mvwprintw(window, 16, 0, "|----------------------------|");
-            mvwprintw(window, 17, 0, "%30s", inputBuffer);
-            wmove(window, 17, 0);
-
-            wrefresh(window);
-
-            // waiting for input
-            FD_ZERO(&readfds);
-            FD_SET(terminal_fd, &readfds);
-
-            int ready = select(terminal_fd + 1, &readfds, NULL, NULL, &timeout);
-            if (ready > 0 && FD_ISSET(terminal_fd, &readfds)) {
-                char input = getchar();
-                if (input == 10) {
-                    inputBuffer[bufferIndex] = '\0';
-
-                    mvwprintw(window, 17, 0, "                              ");
-                    wrefresh(window);
-
-                    int status = system(inputBuffer);
-
-                    bufferIndex = 0;
-                    memset(inputBuffer, 0, sizeof(inputBuffer));
-                }
-                else if (input == 127) {
-                    if (bufferIndex > 0) {
-                        bufferIndex--;
-                        int cursorPos = getcury(window);
-                        wmove(window, cursorPos - 1, 0);
-                        wdelch(window);
-                        wrefresh(window);
-                    }
-                }
-                else {
-                    if (bufferIndex < sizeof(inputBuffer) - 1) {
-                        inputBuffer[bufferIndex++] = input;
-                    }
-
-                    waddch(window, input);
-                    wrefresh(window);
-                }
-            }
-        #elif RUN_UI == 0
-            system("clear");
-            printf("Current warehouse state\nCAPACITY: %u\nPART X: %u\nPART Y: %u\nPART Z: %u\n", warehouse->capacity, warehouse->partX, warehouse->partY, warehouse->partZ);
-            printf("Main process: %d\n", getpid());
-            #if USE_SLEEP == 1
-                sleep(15);
-            #endif
-            usleep(1000000);
-        #endif
 
         // listening for signals
         if (pendingSignal) {
@@ -235,7 +129,7 @@ b8 run_manager_process(pid_list *processes, Warehouse *warehouse, s32 shm_id, s3
     }
 
     // check if all sub-processes closed correctly
-    for (size_t i = 0; i < processes->size; ++i) {
+    for (size_t i = 1; i < processes->size; ++i) {
         #if DEBUG == 1
             printf("Closing process %d\n", processes->pids[i]);
         #endif

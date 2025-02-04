@@ -1,5 +1,5 @@
 // DOC-MISSING
-// FINISHED
+// UNFINISHED
 
 #pragma once
 
@@ -12,7 +12,6 @@
 
 #define DEBUG 0
 #define USE_SLEEP 1
-#define RUN_UI 0
 
 #define DEFAULT_CAP 1000 // (and limit)
 #define DEFAULT_X 0

@@ -1,5 +1,5 @@
 // DOC-MISSING
-// FINISHED
+// UNFINISHED
 
 #include "defines.h"
 #include "structures.h"
@@ -32,6 +32,21 @@
         }                               \
     }                                   \
     while (0)                           \
+
+// function for writing pids to text list (used by UI )
+void write_pids_to_list(pid_list *processes) {
+    FILE *pidList = fopen("./bin/pidList", "w");
+    if (pidList == NULL) {
+        perror("write_pid_list");
+        return;
+    }
+
+    for (size_t i = 0; i < processes->size; ++i) {
+        fprintf(pidList, "%d\n", processes->pids[i]);
+    }
+
+    fclose(pidList);
+}
 
 /* ------------------- */
 /* PROGRAM ENTRY POINT */
@@ -69,6 +84,9 @@ int main(void) {
         return 1;
     }
 
+    // push main process pid to list
+    push_pid(&forks, getpid());
+
     /* ----------------------------------- */
     /* CREATING FORKS & ALL MESSAGE QUEUES */
     /* ----------------------------------- */
@@ -76,6 +94,31 @@ int main(void) {
     // all sub-processes run their "main" function where the proper running loop is located
     // sub-process loop functions are of bool type, if anything fails - FALSE is returned to indicate an error upon closing
     // sub-processes communicate with the manager through message queues and use shared memory
+
+    // run UI sub-process
+    // push UI PID to dynamic list
+    // the actual UI starts updating when warehouse is opened
+        pid_t UI_id = fork();
+        if (UI_id == 0) {
+            char shm_str[64], sem_str[64];
+            snprintf(shm_str, sizeof(shm_str), "%d", shm_id);
+            snprintf(sem_str, sizeof(sem_str), "%d", sem_id);
+
+            if (chdir("./bin") != 0) {
+                perror("chdir");
+                return(1);
+            } else {
+                execlp(
+                    "xterm", "xterm", "-hold",
+                    "-fa", "-misc-fixed-medium-r-semicondensed--13-120-75-75-c-60-iso8859-1", "-fs", "12",
+                    "-bg", "black", "-fg", "white",
+                    "-e", "./ui_fabryka", shm_str, sem_str, NULL);
+                perror("execlp failed");
+                return(0);
+            }
+            
+        }
+    push_pid(&forks, UI_id);
 
     // run warehouse sub-process
     // push warehouse PID to dynamic list
@@ -119,12 +162,14 @@ int main(void) {
     }
     push_pid(&forks, manufacturerB_id);
 
+    // write all pids to text list (used by UI process)
+    write_pids_to_list(&forks);
+
     /* ------------------------------------------- */
     /* MANAGER - PARENT PROCESS ACTUAL FUNCTIONING */
     /* ------------------------------------------- */
 
     // main process loop, used to manage all sub-processes by sending commands to proper message queues
-    // main process loop also contains the terminal UI
 
     // run manager parent process loop
     if (!run_manager_process(&forks, warehouse, shm_id, sem_id)) {

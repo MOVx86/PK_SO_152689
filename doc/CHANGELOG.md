@@ -4,6 +4,10 @@
 
 ### 04.02.2025
 
+- dodane UI w zewnętrznym oknie (terminalu, korzystając z xterm)
+
+### 03.02.2025
+
 - lekkie przebudowanie struktury katalogowej
 - zmiana w planowanym UI, wykorzystanie ncurses, uruchamianie drugiego terminalu z UI (wstępnie, jeszcze niefunkcjonalne)
 - planowanie testów

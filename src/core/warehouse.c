@@ -1,5 +1,5 @@
 // DOC-MISSING
-// FINISHED
+// UNFINISHED
 
 #include "core/warehouse.h"
 #define MIN_TIME 10
@@ -12,7 +12,7 @@ u32 priority;
 void load_warehouse_record(Warehouse *warehouse) {
     // open warehouse record file, if it's empty/doesn't exist - load default values
     // otherwise read values from text file
-    FILE *warehouseLog = fopen("./warehouseLog", "r");
+    FILE *warehouseLog = fopen("./bin/warehouseLog", "r");
     if (warehouseLog == NULL) {
         perror("load_record");
 
@@ -45,7 +45,7 @@ void load_warehouse_record(Warehouse *warehouse) {
 }
 
 void write_warehouse_record(Warehouse * warehouse) {
-    FILE *warehouseLog = fopen("./warehouseLog", "w");
+    FILE *warehouseLog = fopen("./bin/warehouseLog", "w");
     if (warehouseLog == NULL) {
         perror("write_record");
         return;
