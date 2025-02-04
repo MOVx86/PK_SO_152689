@@ -20,6 +20,24 @@
         },
         {
             "type": "shell",
+            "label": "test + build",
+            "linux": {
+                "command": "${workspaceFolder}/build_w_tests.sh"
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/src"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "build task with tests"
+        },
+        {
+            "type": "shell",
             "label": "check files",
             "linux": {
                 "command": "${workspaceFolder}/verify_file_state.sh"

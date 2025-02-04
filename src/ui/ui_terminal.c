@@ -1,12 +1,11 @@
 // DOC-MISSING
 // UNFINISHED
 
-#include "defines.h"
-#include "structures.h"
-#include "ipc_utils.h"
-#include "pid_array.h"
+#include "ui/ui_terminal.h"
 
 b8 uiIsRunning = 1;
+message_t messageBuffer;
+u32 priority;
 
 void read_pid_list(pid_list *processes) {
     FILE *pidList = fopen("./pidList", "r");
@@ -36,6 +35,14 @@ void read_pid_list(pid_list *processes) {
     fclose(pidList);
 }
 
+// definition of message queue attributes
+struct mq_attr attributes = {
+    .mq_flags   = 0,
+    .mq_maxmsg  = 10,
+    .mq_msgsize = sizeof(message_t),
+    .mq_curmsgs = 0
+};
+
 /* ----------------------- */
 /* SEPARATE UI ENTRY POINT */
 /* ----------------------- */
@@ -46,6 +53,9 @@ int main(s32 argc, s8 *argv[]) {
         fprintf(stderr, "Incorrect arguents! Correct: %s <shm_id> <sem_id>\n", argv[0]);
         exit(1);
     }
+
+    // open manager message queue
+    mqd_t qInterface = mq_open("/qI", O_CREAT | O_RDONLY | O_NONBLOCK, 0644, &attributes);
 
     // initialize pid list inside UI process, write to it from pid list text file
     pid_list forks;
@@ -78,8 +88,15 @@ int main(s32 argc, s8 *argv[]) {
     WINDOW *warehouseWindow = newwin(8, 42, 1, 1);
     WINDOW *processWindow = newwin(11, 42, 10, 1);
 
-    // UI loop
+    /* -------------------- */
+    /* STARTING THE UI LOOP */
+    /* -------------------- */
+
+    // wait for warehouse to open before displaying UI
+    while (warehouse->isOpen != TRUE);
     clear();
+
+    // main UI loop
     while (uiIsRunning) {
         // lock semaphor
 
@@ -117,6 +134,14 @@ int main(s32 argc, s8 *argv[]) {
         // refresh window display
         wrefresh(warehouseWindow);
         wrefresh(processWindow);
+
+        // check message queue for commands
+        if (mq_receive(qInterface, (char *)&messageBuffer, sizeof(messageBuffer), &priority) == -1) {}
+        else {
+            if (messageBuffer.commandID == 5) {
+                uiIsRunning = 0;
+            }
+        }
 
         // 100 ms sleep to avoid flickering
         usleep(1000000);

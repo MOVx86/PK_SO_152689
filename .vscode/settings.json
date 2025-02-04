@@ -37,6 +37,9 @@
     "files.associations": {
         "ipc_utils.h": "c",
         "manager.h": "c",
-        "pid_array.h": "c"
+        "pid_array.h": "c",
+        "assert.h": "c",
+        "ui_terminal.h": "c",
+        "warehouse.h": "c"
     }
 }

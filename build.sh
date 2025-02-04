@@ -1,17 +1,17 @@
 #!/bin/bash
 
-# (DEBUG) build task
+# main build task
 pwd
 
 # build main executable
 cFiles=""
 while IFS= read -r -d $'\0' file; do
     cFiles="$cFiles $file"
-done < <(find . -type f -name "*.c" -not -path "./ui/*" -print0)
+done < <(find . -type f -name "*.c" -not -path "./ui/*" -not -path "./tests/*" -print0)
 # echo "List of .c files: $cFiles"
 
 assembly="fabryka"
-defines="-D_DEBUG"
+defines="-DDEBUG=0"
 includeFlags="-I./"
 compileFlags="-g -O0"
 linkerFlags=""
@@ -23,11 +23,11 @@ gcc $defines $includeFlags $compileFlags $cFiles -o ../bin/$assembly $linkerFlag
 cFiles=""
 while IFS= read -r -d $'\0' file; do
     cFiles="$cFiles $file"
-done < <(find . -type f -name "*.c" -not -path "./core/*" -print0)
+done < <(find . -type f -name "*.c" -not -path "./core/*" -not -path "./tests/*" -print0)
 # echo "List of .c files: $cFiles"
 
 assembly="ui_fabryka"
-defines="-D_DEBUG"
+defines="-DDEBUG=0"
 includeFlags="-I./"
 compileFlags="-g -O0"
 linkerFlags="-lncurses"

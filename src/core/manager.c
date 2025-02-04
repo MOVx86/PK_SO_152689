@@ -55,6 +55,9 @@ void signal_handler(s32 signal) {
             break;
         case SIGTERM:
             memset(&pendingMessage, 0, sizeof(message_t));
+            pendingMessage.commandID = 5;
+            strncpy(pendingMessage.message, "Terminate program. Close UI", sizeof(pendingMessage.message));
+            pendingMessage.message[sizeof(pendingMessage.message) - 1] = '\0';
             pendingSignal = 1;
             shouldExit = 1;
             break;
@@ -76,6 +79,7 @@ b8 run_manager_process(pid_list *processes, Warehouse *warehouse, s32 shm_id, s3
     mqd_t qWarehouse = mq_open("/qW", O_CREAT | O_WRONLY | O_NONBLOCK, 0644, &attributes);
     mqd_t qManufacturerA = mq_open("/qA", O_CREAT | O_WRONLY | O_NONBLOCK, 0644, &attributes);
     mqd_t qManufacturerB = mq_open("/qB", O_CREAT | O_WRONLY | O_NONBLOCK, 0644, &attributes);
+    mqd_t qInterface = mq_open("/qI", O_CREAT | O_WRONLY | O_NONBLOCK, 0644, &attributes);
 
     // signal handlers
     signal(SIGUSR1, signal_handler);
@@ -86,8 +90,6 @@ b8 run_manager_process(pid_list *processes, Warehouse *warehouse, s32 shm_id, s3
 
     // parent process running loop
     // listening for signals & sending messages to sub-processes
-    // TODO terminal UI
-
     while (!shouldExit) {
 
         // listening for signals
@@ -115,6 +117,10 @@ b8 run_manager_process(pid_list *processes, Warehouse *warehouse, s32 shm_id, s3
                     MMQ_SEND(qWarehouse, "/qW", &pendingMessage, sizeof(message_t), 1);
                     MMQ_SEND(qManufacturerA, "/qA", &pendingMessage, sizeof(message_t), 1);
                     MMQ_SEND(qManufacturerB, "/qB", &pendingMessage, sizeof(message_t), 1);
+                    pendingSignal = 0;
+                    break;
+                case 5:
+                    MMQ_SEND(qInterface, "/qI", &pendingMessage, sizeof(message_t), 1);
                     pendingSignal = 0;
                     break;
                 default:

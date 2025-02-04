@@ -48,10 +48,6 @@ void write_pids_to_list(pid_list *processes) {
     fclose(pidList);
 }
 
-/* ------------------- */
-/* PROGRAM ENTRY POINT */
-/* ------------------- */
-
 // definition of message queue attributes
 struct mq_attr attributes = {
     .mq_flags   = 0,
@@ -59,6 +55,10 @@ struct mq_attr attributes = {
     .mq_msgsize = sizeof(message_t),
     .mq_curmsgs = 0
 };
+
+/* ------------------- */
+/* PROGRAM ENTRY POINT */
+/* ------------------- */
 
 int main(void) {
     /* --------------------- */
@@ -109,10 +109,10 @@ int main(void) {
                 return(1);
             } else {
                 execlp(
-                    "xterm", "xterm", "-hold",
+                    "xterm", "xterm",
                     "-fa", "-misc-fixed-medium-r-semicondensed--13-120-75-75-c-60-iso8859-1", "-fs", "12",
                     "-bg", "black", "-fg", "white",
-                    "-e", "./ui_fabryka", shm_str, sem_str, NULL);
+                    "-e", "./ui_fabryka", shm_str, sem_str, ";", "exit", NULL);
                 perror("execlp failed");
                 return(0);
             }
