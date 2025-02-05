@@ -27,7 +27,7 @@ done < <(find . -type f -name "*.c" -not -path "./core/*" -not -path "./tests/*"
 # echo "List of .c files: $cFiles"
 
 assembly="ui_fabryka"
-defines="-DDEBUG=0"
+defines="-DDEBUG=0 -DUSE_SLEEP=1"
 includeFlags="-I./"
 compileFlags="-g -O0"
 linkerFlags="-lncurses"

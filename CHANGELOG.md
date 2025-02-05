@@ -5,6 +5,7 @@
 ### 05.02.2025
 
 - dodane testy
+- dodanie raportu do repozytorium, update głównego pliku .md
 
 ### 04.02.2025
 

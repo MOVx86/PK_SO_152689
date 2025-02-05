@@ -22,3 +22,40 @@ Napisz program dla procesów dyrektor oraz dostawca i monter reprezentujących o
 </div>
 
 Link GitHub: [https://github.com/MOVx86/PK_SO_152689]
+
+## WYKONYWANE TESTY
+
+### TEST 1 - poprawne operowanie na dynamicznej liście PID
+
+<div style="text-align: justify">
+Program testowy deklaruje i inicjuje dynamiczną listę PID, następnie weryfikuje dane początkowe w liście.
+Następnie do listy jest dodawany nowy PID, ponownie weryfikowana jest poprawność danych zawartych w liście.
+Na koniec lista zostaje uwolniona/zresetowana, ponownie weryfikowana jest poprawność danych zawartych w liście.
+Jeżeli wszystkie etapy przeszły poprawnie, TEST 1 zakończył się sukcesem.
+</div>
+
+### TEST 2 - poprawne działanie funkcji odpowiedzialnych za interfejs
+
+<div style="text-align: justify">
+Program testowy symuluje wypisanie listy PID do pliku tekstowego, następnie deklaruje i inicjuje strukturę listy PID’ów i czyta plik tekstowy, aby wypełnić listę PID’ów przykładowymi danymi. W trakcie tych operacji, weryfikowane jest czy plik tekstowy został poprawnie otwarty, czy dane zostały poprawnie zapisane i odczytane.
+Następnie inicjowane jest ncurses, tworzone jest testowe okno ncurses. Weryfikowane jest, czy okno zostało poprawnie utworzone.
+Kolejnym krokiem jest wprowadzenie danych do okna ncurses czytając PID’y z listy PID’ów. Przy każdym wprowadzeniu danych do okna weryfikowane jest, czy operacja się powiodła.
+Następnie okno jest zawierane w ramce. Weryfikowane jest, czy operacja box() się powiodła.
+Na koniec usuwane jest okno i kończona jest praca ncurses.
+Jeżeli wszystkie etapy przeszły poprawnie, TEST 2 zakończył się sukcesem.
+</div>
+
+### TEST 3 - poprawna obsługa sygnałów
+
+<div style="text-align: justify">
+Program przypisuje funkcję odpowiedzialną za obsługę sygnałów do przykładowego sygnału (jeden z sygnałów obsługiwanych przez główny program). Następnie do programu wysyłany jest sygnał, który ma być obsłużony.
+Po przyjęciu sygnału, weryfikowana jest zawartość danych, które mają być zmodyfikowane na podstawie otrzymanego sygnału.
+Jeżeli wszystkie etapy przeszły poprawnie, TEST 3 zakończył się sukcesem.
+</div>
+
+### TEST 4 (dodatkowy) - stress-test, uruchomienie głównego programu po skompilowaniu przy wyłączonych funkcjach sleep()
+
+<div style="text-align: justify">
+Główny program wykonawczy jest skompilowany ze zmienną preprocesora USE_SLEEP = 0, wyłączając wszystkie funkcje sleep() w programie. Sprawdzana jest stabilność programu i synchronizacji.
+Test wykonywany jest dodatkowo, poza głównym poleceniem testowania i kompilacji (oddzielny plik wykonawczy nosleep_fabryka).
+</div>
