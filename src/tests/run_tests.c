@@ -18,6 +18,7 @@ void simulate_pid_list_file() {
 
     for (int i = 0; i < 3; ++i) {
         fprintf(pidList, "%d\n", i+1);
+        fflush(pidList);
     }
 
     fclose(pidList);
@@ -25,7 +26,7 @@ void simulate_pid_list_file() {
 }
 
 void read_pid_list(pid_list *processes) {
-    FILE *pidList = fopen("./pidList", "r");
+    FILE *pidList = fopen("../bin/pidList", "r");
     if (pidList == NULL) {
         perror("read_pid_list");
         return;
@@ -39,12 +40,13 @@ void read_pid_list(pid_list *processes) {
         }
     }
     rewind(pidList);
+    assert(lines != 0);
 
     s32 current_pid;
     for (size_t i = 0; i < lines; ++i) {
         fscanf(pidList, "%d", &current_pid);
         #if DEBUG == 1
-            printf("%d\n", current_pid);
+            printf("From pid list: %d\n", current_pid);
         #endif
         push_pid(processes, current_pid);
     }
@@ -102,6 +104,8 @@ void test_display() {
     printf("[TEST 2] START!\n");
     // simulate text file with pid list
     simulate_pid_list_file();
+    pid_list forks;
+    read_pid_list(&forks);
 
     // initialize ui (ncurses)
     initscr();
@@ -115,8 +119,6 @@ void test_display() {
     assert(pidList != NULL);
 
     int printResult;
-    pid_list forks;
-    read_pid_list(&forks);
     for (size_t i = 0; i < forks.size; ++i) {
         printResult = mvwprintw(testWindow, 1, 1, "%10d", forks.pids[i]);
         assert(printResult >= 0);

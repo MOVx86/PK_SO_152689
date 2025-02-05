@@ -10,7 +10,6 @@
     #error "Linux distribution required to run!"
 #endif
 
-#define DEBUG 0
 #define USE_SLEEP 1
 
 #define DEFAULT_CAP 1000 // (and limit)

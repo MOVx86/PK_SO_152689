@@ -2,6 +2,10 @@
 
 ## CHANGELOG
 
+### 05.02.2025
+
+- dodane testy
+
 ### 04.02.2025
 
 - dodane UI w zewnętrznym oknie (terminalu, korzystając z xterm)

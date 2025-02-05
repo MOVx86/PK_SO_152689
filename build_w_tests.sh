@@ -17,7 +17,7 @@ done < <(find . -type f \( -name "run_tests.c" -o -name "ipc_utils.c" -o -name "
 # echo "List of .c files: $cFiles"
 
 assembly="test_fabryka"
-defines="-DDEBUG=0"
+defines="-DDEBUG=1"
 includeFlags="-I./"
 compileFlags="-g -O0"
 linkerFlags="-lncurses"
